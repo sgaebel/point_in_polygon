@@ -32,6 +32,19 @@ static PyObject* point_in_polygon(PyObject* self, PyObject* args)
         poly_array_y[N] = PyFloat_AsDouble(PyIter_Next(iterator_polygon_y));
     }
 
+    if (poly_array_x[0] != poly_array_x[n_vert-1]) {
+        PyErr_SetString(PyExc_ValueError, "Polygon is not closed.");
+        free(poly_array_x);
+        free(poly_array_y);
+        return NULL;
+    }
+    if (poly_array_y[0] != poly_array_y[n_vert-1]) {
+        PyErr_SetString(PyExc_ValueError, "Polygon is not closed.");
+        free(poly_array_x);
+        free(poly_array_y);
+        return NULL;
+    }
+
     int i, j, c = 0;
     for (i = 0, j = n_vert-1; i < n_vert; j = i++) {
         if ( ((poly_array_y[i]>test_y) != (poly_array_y[j]>test_y)) &&
@@ -51,6 +64,8 @@ static PyObject* point_in_polygon(PyObject* self, PyObject* args)
 static PyMethodDef pip_methods[] = {
     { "point_in_polygon", point_in_polygon, METH_VARARGS,
     "Checks if a point is located within a polygon.\n"
+    "The polygon must be closed, i.e. the last point must be identical to the\n"
+    "first point. polygon_x[0] == polygon_x[-1] and polygon_y[0] == polygon_y[-1]."
     "\n"
     "Parameters\n"
     "----------\n"
@@ -75,6 +90,11 @@ static PyMethodDef pip_methods[] = {
     "    outside the polygon, points on left or downards facing\n"
     "    edges are considered inside.\n"
     "    Vertices which are on the top-left \n"
+    "\n"
+    "Raises\n"
+    "------\n"
+    "ValueError\n"
+    "    If the polygon is not closed.\n"
     "\n" },
     { NULL, NULL, 0, NULL }
 };
