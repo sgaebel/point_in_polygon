@@ -1,9 +1,26 @@
 from distutils.core import setup, Extension
 
 polygon_module = Extension('point_in_polygon',
-                           sources = ['point_in_polygon.c'])
+                           sources = ['src/point_in_polygon/point_in_polygon.c'])
+
+long_description = """A CPython extension which wraps the PNPOLY
+point inclusion in polygon test by W. Randolph Franklin
+(ref.: https://wrfranklin.org/Research/Short_Notes/pnpoly.html).
+"""
 
 setup (name = 'point_in_polygon',
        version = '1.0',
-       description = 'Package for polygon functions.',
-       ext_modules = [polygon_module])
+       description = 'CPython extension for checking if a polygon contains a given point.',
+       url = 'https://github.com/sgaebel/point_in_polygon',
+       author = 'Dr. Sebastian M. Gaebel',
+       author_email = 'gaebel.sebastian@gmail.com',
+       license = 'MIT',
+       ext_modules = [polygon_module],
+       classifiers=[
+              'Development Status :: 5 - Production/STable',
+              'Intended Audience :: Developers',
+              'Topic :: Geometry :: Polygons',
+              'License :: OSI Approved :: MIT License',
+              'Programming Language :: Python :: 3.10'],
+       keywords = 'geometry polygon',
+       python_requires = '>=3.10')
