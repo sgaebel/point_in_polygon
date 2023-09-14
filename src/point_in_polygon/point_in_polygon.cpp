@@ -79,7 +79,10 @@ static PyObject* experimentation(PyObject* self, PyObject* args)
     PyObject *iterator_polygon_y = PyObject_GetIter(py_polygon_y);
     if (!iterator_polygon_y)
         return NULL;
-    PyObject *return_value = Py_BuildValue("[OOO]", Py_True, Py_False, Py_True);
+    PyObject *return_value = Py_BuildValue("[]");
+    PyList_Append(return_value, Py_True);
+    PyList_Append(return_value, Py_False);
+    PyList_Append(return_value, Py_True);
     return return_value;
 }
 
