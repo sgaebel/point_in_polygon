@@ -5,61 +5,56 @@
 
 #include <python3.10/Python.h>
 #include <vector>
-#include <string>
 
+
+#ifdef __cplusplus
 extern "C" {
-bool pnpoly(int n_vert, std::vector<double> polygon_x,
-            std::vector<double> polygon_y, double test_x, double test_y)
-{
-    int i, j, c = 0;
-    for (i = 0, j = n_vert-1; i < n_vert; j = i++) {
-        if ( ((polygon_y.at(i)>test_y) != (polygon_y.at(j)>test_y)) &&
-    	     (test_x < (polygon_x.at(j)-polygon_x.at(i)) * (test_y-polygon_y.at(i)) / (polygon_y.at(j)-polygon_y.at(i)) + polygon_x.at(i)) )
-            c = !c;
-    }
-    return c;
-}
+#endif
 
 static PyObject* point_in_polygon(PyObject* self, PyObject* args)
 {
-    size_t n_vert;
-    PyObject *py_polygon_x;
-    PyObject *py_polygon_y;
+    int n_vert;
+    PyObject *polygon_x;
+    PyObject *polygon_y;
     double test_x, test_y;
-    /* Parse the input tuple */
-    if (!PyArg_ParseTuple(args, "iOOdd", &n_vert, &py_polygon_x, &py_polygon_y, &test_x, &test_y))
+   /* Parse the input tuple */
+    if (!PyArg_ParseTuple(args, "iOOdd", &n_vert, &polygon_x, &polygon_y, &test_x, &test_y))
         return NULL;
-    PyObject *iterator_polygon_x = PyObject_GetIter(py_polygon_x);
+    PyObject *iterator_polygon_x = PyObject_GetIter(polygon_x);
     if (!iterator_polygon_x)
         return NULL;
-    PyObject *iterator_polygon_y = PyObject_GetIter(py_polygon_y);
+    PyObject *iterator_polygon_y = PyObject_GetIter(polygon_y);
     if (!iterator_polygon_y)
         return NULL;
 
-    std::vector<double> polygon_x;
-    std::vector<double> polygon_y;
+    std::vector<double> poly_array_x, poly_array_y;
 
-    for (size_t N = 0; N < n_vert; ++N) {
-        polygon_x.push_back(PyFloat_AsDouble(PyIter_Next(iterator_polygon_x)));
-        polygon_y.push_back(PyFloat_AsDouble(PyIter_Next(iterator_polygon_y)));
+    for (int N=0; N<n_vert; ++N) {
+        poly_array_x.push_back(PyFloat_AsDouble(PyIter_Next(iterator_polygon_x)));
+        poly_array_y.push_back(PyFloat_AsDouble(PyIter_Next(iterator_polygon_y)));
     }
 
-    if (polygon_x.front() != polygon_x.back()) {
+    if (poly_array_x[0] != poly_array_x[n_vert-1]) {
         PyErr_SetString(PyExc_ValueError, "Polygon is not closed.");
         return NULL;
     }
-    if (polygon_y.front() != polygon_y.back()) {
+    if (poly_array_y[0] != poly_array_y[n_vert-1]) {
         PyErr_SetString(PyExc_ValueError, "Polygon is not closed.");
         return NULL;
     }
 
-    bool c = pnpoly(n_vert, polygon_x, polygon_y, test_x, test_y);
+    int i, j, c = 0;
+    for (i = 0, j = n_vert-1; i < n_vert; j = i++) {
+        if ( ((poly_array_y[i]>test_y) != (poly_array_y[j]>test_y)) &&
+    	     (test_x < (poly_array_x[j]-poly_array_x[i]) * (test_y-poly_array_y[i]) / (poly_array_y[j]-poly_array_y[i]) + poly_array_x[i]) )
+            c = !c;
+    }
 
     return c ? Py_True: Py_False;
 }
 
 
-static PyMethodDef pinp_methods[] = {
+static PyMethodDef pip_methods[] = {
     { "point_in_polygon", point_in_polygon, METH_VARARGS,
     "Checks if a point is located within a polygon.\n"
     "The polygon must be closed, i.e. the last point must be identical to the\n"
@@ -103,17 +98,20 @@ static PyMethodDef pinp_methods[] = {
 //     Right edge: OUTSIDE
 //     Bottom edge: INSIDE
 // Our Module Definition struct
-static struct PyModuleDef pinp_module = {
+static struct PyModuleDef pip_module = {
     PyModuleDef_HEAD_INIT,
     "point_in_polygon",
-    "Point in Polygon Module",
+    "Test Module",
     -1,
-    pinp_methods
+    pip_methods
 };
+
 
 PyMODINIT_FUNC PyInit_point_in_polygon(void)
 {
-    return PyModule_Create(&pinp_module);
+    return PyModule_Create(&pip_module);
 }
 
+#ifdef __cplusplus
 }  // closes extern "C"
+#endif
