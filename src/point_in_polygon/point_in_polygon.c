@@ -6,8 +6,6 @@
 #include <python3.10/Python.h>
 
 
-// Our Python binding to our C function
-// This will take one and only one non-keyword argument
 static PyObject* point_in_polygon(PyObject* self, PyObject* args)
 {
     int n_vert;
@@ -58,9 +56,7 @@ static PyObject* point_in_polygon(PyObject* self, PyObject* args)
     return c ? Py_True: Py_False;
 }
 
-// Our Module's Function Definition struct
-// We require this `NULL` to signal the end of our method
-// definition
+
 static PyMethodDef pip_methods[] = {
     { "point_in_polygon", point_in_polygon, METH_VARARGS,
     "Checks if a point is located within a polygon.\n"
@@ -113,7 +109,7 @@ static struct PyModuleDef pip_module = {
     pip_methods
 };
 
-// Initializes our module using our above struct
+
 PyMODINIT_FUNC PyInit_point_in_polygon(void)
 {
     return PyModule_Create(&pip_module);
