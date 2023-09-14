@@ -11,44 +11,55 @@
 extern "C" {
 #endif
 
+
+bool point_in_polygon_single(std::vector<double> polygon_x,
+                             std::vector<double> polygon_y,
+                             double test_x, double test_y)
+{
+    int n_vert = polygon_x.size();
+    int i, j, c = 0;
+    for (i = 0, j = n_vert-1; i < n_vert; j = i++) {
+        if ( ((polygon_y.at(i)>test_y) != (polygon_y.at(j)>test_y)) &&
+    	     (test_x < (polygon_x.at(j)-polygon_x.at(i)) * (test_y-polygon_y.at(i)) / (polygon_y.at(j)-polygon_y.at(i)) + polygon_x.at(i)) )
+            c = !c;
+    }
+    return (bool) c;
+}
+
+
 static PyObject* point_in_polygon(PyObject* self, PyObject* args)
 {
     int n_vert;
-    PyObject *polygon_x;
-    PyObject *polygon_y;
+    PyObject *py_polygon_x;
+    PyObject *py_polygon_y;
     double test_x, test_y;
    /* Parse the input tuple */
-    if (!PyArg_ParseTuple(args, "iOOdd", &n_vert, &polygon_x, &polygon_y, &test_x, &test_y))
+    if (!PyArg_ParseTuple(args, "iOOdd", &n_vert, &py_polygon_x, &py_polygon_y, &test_x, &test_y))
         return NULL;
-    PyObject *iterator_polygon_x = PyObject_GetIter(polygon_x);
+    PyObject *iterator_polygon_x = PyObject_GetIter(py_polygon_x);
     if (!iterator_polygon_x)
         return NULL;
-    PyObject *iterator_polygon_y = PyObject_GetIter(polygon_y);
+    PyObject *iterator_polygon_y = PyObject_GetIter(py_polygon_y);
     if (!iterator_polygon_y)
         return NULL;
 
-    std::vector<double> poly_array_x, poly_array_y;
+    std::vector<double> polygon_x, polygon_y;
 
-    for (int N=0; N<n_vert; ++N) {
-        poly_array_x.push_back(PyFloat_AsDouble(PyIter_Next(iterator_polygon_x)));
-        poly_array_y.push_back(PyFloat_AsDouble(PyIter_Next(iterator_polygon_y)));
+    for (size_t idx = 0; idx < n_vert; ++idx) {
+        polygon_x.push_back(PyFloat_AsDouble(PyIter_Next(iterator_polygon_x)));
+        polygon_y.push_back(PyFloat_AsDouble(PyIter_Next(iterator_polygon_y)));
     }
 
-    if (poly_array_x[0] != poly_array_x[n_vert-1]) {
+    if (polygon_x.at(0) != polygon_x.at(n_vert-1)) {
         PyErr_SetString(PyExc_ValueError, "Polygon is not closed.");
         return NULL;
     }
-    if (poly_array_y[0] != poly_array_y[n_vert-1]) {
+    if (polygon_y.at(0) != polygon_y.at(n_vert-1)) {
         PyErr_SetString(PyExc_ValueError, "Polygon is not closed.");
         return NULL;
     }
 
-    int i, j, c = 0;
-    for (i = 0, j = n_vert-1; i < n_vert; j = i++) {
-        if ( ((poly_array_y[i]>test_y) != (poly_array_y[j]>test_y)) &&
-    	     (test_x < (poly_array_x[j]-poly_array_x[i]) * (test_y-poly_array_y[i]) / (poly_array_y[j]-poly_array_y[i]) + poly_array_x[i]) )
-            c = !c;
-    }
+    bool c = point_in_polygon_single(polygon_x, polygon_y, test_x, test_y);
 
     return c ? Py_True: Py_False;
 }
