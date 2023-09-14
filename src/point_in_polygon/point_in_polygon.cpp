@@ -65,6 +65,12 @@ static PyObject* point_in_polygon(PyObject* self, PyObject* args)
 }
 
 
+static PyObject* no_op(PyObject* self, PyObject* args)
+{
+    return Py_True;
+}
+
+
 static PyMethodDef pip_methods[] = {
     { "point_in_polygon", point_in_polygon, METH_VARARGS,
     "Checks if a point is located within a polygon.\n"
@@ -100,6 +106,7 @@ static PyMethodDef pip_methods[] = {
     "ValueError\n"
     "    If the polygon is not closed.\n"
     "\n" },
+    { "no_op", no_op, METH_NOARGS, NULL },
     { NULL, NULL, 0, NULL }
 };
 // Edge Cases

@@ -94,3 +94,8 @@ def test_edge_cases():
     # bottom
     assert pinp.point_in_polygon(n_vert, square_x, square_y, 2.399, 0.5)
     return
+
+
+def test_noop():
+    assert pinp.no_op()
+    return
