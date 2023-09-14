@@ -65,9 +65,22 @@ static PyObject* point_in_polygon(PyObject* self, PyObject* args)
 }
 
 
-static PyObject* no_op(PyObject* self, PyObject* args)
+static PyObject* experimentation(PyObject* self, PyObject* args)
 {
-    return Py_True;
+    PyObject *py_polygon_x;
+    PyObject *py_polygon_y;
+    double test_x, test_y;
+   /* Parse the input tuple */
+    if (!PyArg_ParseTuple(args, "OO", &py_polygon_x, &py_polygon_y))
+        return NULL;
+    PyObject *iterator_polygon_x = PyObject_GetIter(py_polygon_x);
+    if (!iterator_polygon_x)
+        return NULL;
+    PyObject *iterator_polygon_y = PyObject_GetIter(py_polygon_y);
+    if (!iterator_polygon_y)
+        return NULL;
+    PyObject *return_value = Py_BuildValue("[OOO]", Py_True, Py_False, Py_True);
+    return return_value;
 }
 
 
@@ -106,7 +119,7 @@ static PyMethodDef pip_methods[] = {
     "ValueError\n"
     "    If the polygon is not closed.\n"
     "\n" },
-    { "no_op", no_op, METH_NOARGS, NULL },
+    { "experimentation", experimentation, METH_VARARGS, NULL },
     { NULL, NULL, 0, NULL }
 };
 // Edge Cases

@@ -96,6 +96,6 @@ def test_edge_cases():
     return
 
 
-def test_noop():
-    assert pinp.no_op()
+def test_experimentation():
+    assert pinp.experimentation([42., 9, -0.3], [-42., -9, 0.3, 3.14159265]) == [True, False, True]
     return

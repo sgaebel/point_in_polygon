@@ -1,7 +1,7 @@
 from distutils.core import setup, Extension
 
 polygon_module = Extension('point_in_polygon',
-                           sources = ['src/point_in_polygon/point_in_polygon.c'])
+                           sources = ['src/point_in_polygon/point_in_polygon.cpp'])
 
 long_description = """A CPython extension which wraps the PNPOLY
 point inclusion in polygon test by W. Randolph Franklin
