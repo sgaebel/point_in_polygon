@@ -19,7 +19,7 @@ setup (name = 'point_in_polygon',
        classifiers=[
               'Development Status :: 5 - Production/STable',
               'Intended Audience :: Developers',
-              'Topic :: Geometry :: Polygons',
+              'Topic :: Scientific/Engineering :: Mathematics',
               'License :: OSI Approved :: MIT License',
               'Programming Language :: Python :: 3.10'],
        keywords = 'geometry polygon',
