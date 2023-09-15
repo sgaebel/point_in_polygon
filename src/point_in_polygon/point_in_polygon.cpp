@@ -67,7 +67,7 @@ static PyObject* point_in_polygon(PyObject* self, PyObject* args)
 }
 
 
-static PyMethodDef pinp_methods[] = {
+static PyMethodDef pcp_methods[] = {
     { "point_in_polygon", point_in_polygon, METH_VARARGS,
     "Checks if a point is located within a polygon.\n"
     "The polygon must be closed, i.e. the last point must be identical to the\n"
@@ -111,18 +111,18 @@ static PyMethodDef pinp_methods[] = {
 //     Right edge: OUTSIDE
 //     Bottom edge: INSIDE
 // Our Module Definition struct
-static struct PyModuleDef pinp_module = {
+static struct PyModuleDef pcp_module = {
     PyModuleDef_HEAD_INIT,
-    "point_in_polygon",
-    "Test Module",
+    "polygon_contains_point",
+    NULL,
     -1,
-    pinp_methods
+    pcp_methods
 };
 
 
-PyMODINIT_FUNC PyInit_point_in_polygon(void)
+PyMODINIT_FUNC PyInit_polygon_contains_point(void)
 {
-    return PyModule_Create(&pinp_module);
+    return PyModule_Create(&pcp_module);
 }
 
 #ifdef __cplusplus

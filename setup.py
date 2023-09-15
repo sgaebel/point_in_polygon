@@ -1,6 +1,6 @@
 from distutils.core import setup, Extension
 
-polygon_module = Extension('point_in_polygon',
+polygon_module = Extension('polygon_contains_point',
                            sources = ['src/point_in_polygon/point_in_polygon.cpp'])
 
 long_description = """A CPython extension which wraps the PNPOLY
@@ -8,8 +8,8 @@ point inclusion in polygon test by W. Randolph Franklin
 (ref.: https://wrfranklin.org/Research/Short_Notes/pnpoly.html).
 """
 
-setup (name = 'point_in_polygon',
-       version = '1.1',
+setup (name = 'polygon_contains_point',
+       version = '1.0',
        description = 'CPython extension for checking if a polygon contains a given point.',
        url = 'https://github.com/sgaebel/point_in_polygon',
        author = 'Dr. Sebastian M. Gaebel',

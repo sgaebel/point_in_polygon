@@ -1,4 +1,4 @@
-import point_in_polygon as pinp
+import polygon_contains_point as pinp
 import math
 import pytest
 
