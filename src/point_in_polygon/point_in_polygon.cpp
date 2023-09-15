@@ -3,7 +3,7 @@
 // source: https://wrfranklin.org/Research/Short_Notes/pnpoly.html
 // with slight modification.
 
-#include <python3.10/Python.h>
+#include <Python.h>
 #include <vector>
 #include <string>
 
@@ -30,12 +30,12 @@ bool point_in_polygon_single(std::vector<double> polygon_x,
 
 static PyObject* point_in_polygon(PyObject* self, PyObject* args)
 {
-    int n_vert;
+    int py_n_vert;
     PyObject *py_polygon_x;
     PyObject *py_polygon_y;
     double test_x, test_y;
    /* Parse the input tuple */
-    if (!PyArg_ParseTuple(args, "iOOdd", &n_vert, &py_polygon_x, &py_polygon_y, &test_x, &test_y))
+    if (!PyArg_ParseTuple(args, "iOOdd", &py_n_vert, &py_polygon_x, &py_polygon_y, &test_x, &test_y))
         return NULL;
     PyObject *iterator_polygon_x = PyObject_GetIter(py_polygon_x);
     if (!iterator_polygon_x)
@@ -44,6 +44,7 @@ static PyObject* point_in_polygon(PyObject* self, PyObject* args)
     if (!iterator_polygon_y)
         return NULL;
 
+    size_t n_vert = (size_t)py_n_vert;
     std::vector<double> polygon_x, polygon_y;
 
     for (size_t idx = 0; idx < n_vert; ++idx) {
