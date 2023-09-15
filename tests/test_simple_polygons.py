@@ -36,40 +36,6 @@ def test_containment():
     return
 
 
-def batch_containment():
-    def linspace(start, end, N, func=None):
-        step = (end - start) / N
-        values = [start + t * step for t in range(N+1)]
-        if func:
-            values = [func(t) for t in values]
-        return values
-    n_vert = 42
-    circle_0_x = linspace(0, _TAU, n_vert, math.sin)
-    circle_0_y = linspace(0, _TAU, n_vert, math.cos)
-    n_vert = 123
-    circle_1_x = linspace(0, _TAU, n_vert, lambda x: math.sin(x) * 2 + 1)
-    circle_1_y = linspace(0, _TAU, n_vert, lambda x: math.cos(x) * 2 - 2)
-    n_vert = 13
-    circle_2_x = linspace(0, _TAU, n_vert, lambda x: math.sin(x) * 0.5 + 0.9)
-    circle_2_y = linspace(0, _TAU, n_vert, lambda x: math.cos(x) * 0.5 + 0.1)
-    concatenated_x = circle_0_x + circle_1_x + circle_2_x
-    concatenated_y = circle_0_y + circle_1_y + circle_2_y
-    # one polygon not closed
-    with pytest.raises(ValueError):
-        pinp.point_in_polygon_triplet(42, 120, 11, circle_0_x, circle_0_y,
-                                circle_1_x[:-3], circle_1_y[:-3], circle_2_x, circle_2_y, 0., 0.)
-    assert pinp.point_in_polygon_triplet(
-        42, 123, 11, circle_0_x, circle_0_y, circle_1_x, circle_1_y,
-        circle_2_x, circle_2_y, 0., 0.) == [True, False, False]
-    assert pinp.point_in_polygon_triplet(
-        42, 123, 11, circle_0_x, circle_0_y, circle_1_x, circle_1_y,
-        circle_2_x, circle_2_y, 0.7, -0.3) == [True, True, True]
-    assert pinp.point_in_polygon_triplet(
-        42, 123, 11, circle_0_x, circle_0_y, circle_1_x, circle_1_y,
-        circle_2_x, circle_2_y, -1., -1.) == [False, False, False]
-    return
-
-
 def test_edge_cases():
     #   simple square
     n_vert = 5
@@ -93,9 +59,4 @@ def test_edge_cases():
     assert not pinp.point_in_polygon(n_vert, square_x, square_y, 2.4, 1.123)
     # bottom
     assert pinp.point_in_polygon(n_vert, square_x, square_y, 2.399, 0.5)
-    return
-
-
-def test_experimentation():
-    assert pinp.experimentation([42., 9, -0.3], [-42., -9, 0.3, 3.14159265]) == [True, False, True]
     return

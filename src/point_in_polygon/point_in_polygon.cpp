@@ -5,6 +5,7 @@
 
 #include <python3.10/Python.h>
 #include <vector>
+#include <string>
 
 
 #ifdef __cplusplus
@@ -65,29 +66,7 @@ static PyObject* point_in_polygon(PyObject* self, PyObject* args)
 }
 
 
-static PyObject* experimentation(PyObject* self, PyObject* args)
-{
-    PyObject *py_polygon_x;
-    PyObject *py_polygon_y;
-    double test_x, test_y;
-   /* Parse the input tuple */
-    if (!PyArg_ParseTuple(args, "OO", &py_polygon_x, &py_polygon_y))
-        return NULL;
-    PyObject *iterator_polygon_x = PyObject_GetIter(py_polygon_x);
-    if (!iterator_polygon_x)
-        return NULL;
-    PyObject *iterator_polygon_y = PyObject_GetIter(py_polygon_y);
-    if (!iterator_polygon_y)
-        return NULL;
-    PyObject *return_value = Py_BuildValue("[]");
-    PyList_Append(return_value, Py_True);
-    PyList_Append(return_value, Py_False);
-    PyList_Append(return_value, Py_True);
-    return return_value;
-}
-
-
-static PyMethodDef pip_methods[] = {
+static PyMethodDef pinp_methods[] = {
     { "point_in_polygon", point_in_polygon, METH_VARARGS,
     "Checks if a point is located within a polygon.\n"
     "The polygon must be closed, i.e. the last point must be identical to the\n"
@@ -122,7 +101,6 @@ static PyMethodDef pip_methods[] = {
     "ValueError\n"
     "    If the polygon is not closed.\n"
     "\n" },
-    { "experimentation", experimentation, METH_VARARGS, NULL },
     { NULL, NULL, 0, NULL }
 };
 // Edge Cases
@@ -132,18 +110,18 @@ static PyMethodDef pip_methods[] = {
 //     Right edge: OUTSIDE
 //     Bottom edge: INSIDE
 // Our Module Definition struct
-static struct PyModuleDef pip_module = {
+static struct PyModuleDef pinp_module = {
     PyModuleDef_HEAD_INIT,
     "point_in_polygon",
     "Test Module",
     -1,
-    pip_methods
+    pinp_methods
 };
 
 
 PyMODINIT_FUNC PyInit_point_in_polygon(void)
 {
-    return PyModule_Create(&pip_module);
+    return PyModule_Create(&pinp_module);
 }
 
 #ifdef __cplusplus
