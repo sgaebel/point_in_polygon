@@ -9,6 +9,7 @@ test: clean install
 	pytest
 
 wheel:
+	rm dist/*
 	docker build -t pointinpolygon:builder .
 	docker run --rm pointinpolygon:builder &
 	sleep 30
