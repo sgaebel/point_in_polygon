@@ -47,7 +47,7 @@ static PyObject* point_in_polygon(PyObject* self, PyObject* args, PyObject* kwar
     PyObject *py_polygon_y;
     double test_x, test_y;
    /* Parse the input tuple */
-    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "iOOdd", keywords, &py_n_vertices, &py_polygon_x, &py_polygon_y, &test_x, &test_y))
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "iOOdd:point_in_polygon", keywords, &py_n_vertices, &py_polygon_x, &py_polygon_y, &test_x, &test_y))
         return NULL;
     PyObject *iterator_polygon_x = PyObject_GetIter(py_polygon_x);
     if (!iterator_polygon_x)
