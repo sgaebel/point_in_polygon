@@ -2,8 +2,18 @@
 //  located within a polygon.
 // source: https://wrfranklin.org/Research/Short_Notes/pnpoly.html
 // with slight modification.
+// will be replaced be "DOCKER_BUILD" for the wheel building inside docker
 
-#include <Python.h>
+#define LOCAL_BUILD
+
+#ifdef DOCKER_BUILD
+  // docker build for wheel
+  #include <Python.h>
+#else
+  // local builds
+  #include <python3.10/Python.h>
+#endif
+
 #include <vector>
 #include <string>
 
@@ -28,14 +38,16 @@ bool point_in_polygon_single(std::vector<double> polygon_x,
 }
 
 
-static PyObject* point_in_polygon(PyObject* self, PyObject* args)
+static PyObject* point_in_polygon(PyObject* self, PyObject* args, PyObject* kwargs)
 {
-    int py_n_vert;
+    static char* keywords[] = {"n_vertices", "polygon_x", "polygon_y",
+                               "test_x", "test_y", NULL};
+    int py_n_vertices;
     PyObject *py_polygon_x;
     PyObject *py_polygon_y;
     double test_x, test_y;
    /* Parse the input tuple */
-    if (!PyArg_ParseTuple(args, "iOOdd", &py_n_vert, &py_polygon_x, &py_polygon_y, &test_x, &test_y))
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "iOOdd", keywords, &py_n_vertices, &py_polygon_x, &py_polygon_y, &test_x, &test_y))
         return NULL;
     PyObject *iterator_polygon_x = PyObject_GetIter(py_polygon_x);
     if (!iterator_polygon_x)
@@ -44,19 +56,19 @@ static PyObject* point_in_polygon(PyObject* self, PyObject* args)
     if (!iterator_polygon_y)
         return NULL;
 
-    size_t n_vert = (size_t)py_n_vert;
+    size_t n_vertices = (size_t)py_n_vertices;
     std::vector<double> polygon_x, polygon_y;
 
-    for (size_t idx = 0; idx < n_vert; ++idx) {
+    for (size_t idx = 0; idx < n_vertices; ++idx) {
         polygon_x.push_back(PyFloat_AsDouble(PyIter_Next(iterator_polygon_x)));
         polygon_y.push_back(PyFloat_AsDouble(PyIter_Next(iterator_polygon_y)));
     }
 
-    if (polygon_x.at(0) != polygon_x.at(n_vert-1)) {
+    if (polygon_x.at(0) != polygon_x.at(n_vertices-1)) {
         PyErr_SetString(PyExc_ValueError, "Polygon is not closed.");
         return NULL;
     }
-    if (polygon_y.at(0) != polygon_y.at(n_vert-1)) {
+    if (polygon_y.at(0) != polygon_y.at(n_vertices-1)) {
         PyErr_SetString(PyExc_ValueError, "Polygon is not closed.");
         return NULL;
     }
@@ -68,14 +80,14 @@ static PyObject* point_in_polygon(PyObject* self, PyObject* args)
 
 
 static PyMethodDef pcp_methods[] = {
-    { "point_in_polygon", point_in_polygon, METH_VARARGS,
+    { "point_in_polygon", (PyCFunction) point_in_polygon, METH_VARARGS | METH_KEYWORDS,
     "Checks if a point is located within a polygon.\n"
     "The polygon must be closed, i.e. the last point must be identical to the\n"
     "first point. polygon_x[0] == polygon_x[-1] and polygon_y[0] == polygon_y[-1]."
     "\n"
     "Parameters\n"
     "----------\n"
-    "length : int\n"
+    "n_vertices : int\n"
     "    Number of vertices in the polygon.\n"
     "polygon_x : list\n"
     "    List of x coordinates of the polygon vertices. Must have length 'length'.\n"

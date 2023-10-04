@@ -60,3 +60,27 @@ def test_edge_cases():
     # bottom
     assert pinp.point_in_polygon(n_vert, square_x, square_y, 2.399, 0.5)
     return
+
+def test_containment_with_keywords():
+    # simple square
+    square_x = [0.5, 2.4, 2.4, 0.5]
+    square_y = [0.5, 0.5, 2.4, 2.4]
+    with pytest.raises(ValueError):
+        assert pinp.point_in_polygon(4, square_x, square_y, test_y=1.3, test_x=0.7)
+    # close the polygon
+    square_x.append(square_x[0])
+    square_y.append(square_y[0])
+    n_vert = len(square_x)
+    assert n_vert == len(square_y)
+    assert pinp.point_in_polygon(n_vertices=n_vert, test_y=1.3, 
+                                 polygon_y=square_y, polygon_x=square_x, test_x=0.7)
+    assert not pinp.point_in_polygon(n_vertices=n_vert, polygon_x=square_x,
+                                     polygon_y=square_y, test_x=0.7, test_y=13.)
+    # shifted unit circle
+    n_vert = 100
+    x = [i/n_vert * _TAU for i in range(n_vert)]
+    circle_x = list(math.sin(t) - 1.4 for t in x)
+    circle_y = list(math.cos(t) + 0.3 for t in x)
+    with pytest.raises(ValueError):
+        assert pinp.point_in_polygon(n_vertices=n_vert, polygon_x=circle_x, polygon_y=circle_y, test_x=-1.4, test_y=1.1)
+    return

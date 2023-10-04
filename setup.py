@@ -9,7 +9,7 @@ point inclusion in polygon test by W. Randolph Franklin
 """
 
 setup (name = 'polygon_contains_point',
-       version = '1.0',
+       version = '1.1',
        description = 'CPython extension for checking if a polygon contains a given point.',
        url = 'https://github.com/sgaebel/point_in_polygon',
        author = 'Dr. Sebastian M. Gaebel',
